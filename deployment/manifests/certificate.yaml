@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: alternative
+  namespace: default
+spec:
+  secretName: cert-alternative
+  dnsNames:
+  - dnsName
+  issuerRef:
+    name: clusterissuer
+    kind: ClusterIssuer

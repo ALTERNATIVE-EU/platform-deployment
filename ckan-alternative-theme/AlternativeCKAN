@@ -1,0 +1,44 @@
+FROM ghcr.io/keitaroinc/ckan:2.9.5
+
+ENV CKAN__PLUGINS envvars stats image_view text_view recline_view datastore datapusher keycloak_auth alternative_theme cloudstorage
+
+# Switch to the root user
+USER root
+
+RUN apk add --update musl-dev libffi-dev python3-dev gcc
+
+COPY ./ckanext-alternative_theme /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-alternative_theme/ckanext-alternative_theme
+COPY ./ckanext-keycloak_auth /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_auth/ckanext-keycloak_auth
+COPY dev-requirements.txt /srv/app/dev-requirements.txt
+COPY keycloak_auth-config /srv/app/keycloak_auth-config
+COPY cloudstorage-config /srv/app/cloudstorage-config
+COPY custom-ckan-config /srv/app/custom-ckan-config
+COPY alternative-gcp-credentials.json /srv/app/alternative-gcp-credentials.json
+
+WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-alternative_theme/ckanext-alternative_theme
+RUN pip install -r /srv/app/dev-requirements.txt
+RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-alternative_theme/ckanext-alternative_theme/setup.py develop
+WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_auth/ckanext-keycloak_auth
+RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_auth/ckanext-keycloak_auth/setup.py develop
+
+RUN rm /srv/app/prerun.py
+COPY prerun.py /srv/app/prerun.py
+
+# Install and enable the custom extensions
+RUN ckan config-tool "/srv/app/production.ini" "ckan.plugins = ${CKAN__PLUGINS}" && \
+    chown -R ckan:ckan /srv/app
+
+# Cloud Storage Extension
+WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-cloudstorage/ckanext-cloudstorage
+COPY ./ckanext-cloudstorage /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-cloudstorage/ckanext-cloudstorage
+RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-cloudstorage/ckanext-cloudstorage/setup.py develop
+
+# Set-up config file
+RUN ckan config-tool /srv/app/production.ini -f /srv/app/keycloak_auth-config
+RUN ckan config-tool /srv/app/production.ini -f /srv/app/cloudstorage-config
+RUN ckan config-tool /srv/app/production.ini -f /srv/app/custom-ckan-config
+
+# Switch to the ckan user
+USER ckan
+
+WORKDIR /srv/app

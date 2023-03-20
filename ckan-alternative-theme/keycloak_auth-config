@@ -1,0 +1,7 @@
+ckanext.keycloak.server_url = server_url
+ckanext.keycloak.realm = alternative
+ckanext.keycloak.client_id = ckan-backend
+ckanext.keycloak.frontend_client_id = ckan-frontend
+ckanext.keycloak.admin_group = admins
+ckanext.keycloak.client_secret_key = client_secret_key
+ckanext.keycloak.ckan_url = ckan_url

@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "alternative"
+  namespace: "default"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+spec:
+  tls:
+  - hosts:
+    - "host"
+    secretName: "cert-alternative"
+  rules:
+  - host: "host"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "ckan"
+            port:
+              number: 80
+      - path: /auth/
+        pathType: Prefix
+        backend:
+          service:
+            name: "keycloak"
+            port:
+              number: 80

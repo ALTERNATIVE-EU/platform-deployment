@@ -1,0 +1,4 @@
+ckan.auth.allow_dataset_collaborators = true
+ckan.auth.allow_admin_collaborators = true
+ckan.auth.public_user_details = false
+ckan.activity_streams_email_notifications = true

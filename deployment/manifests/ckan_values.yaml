@@ -1,0 +1,15 @@
+image:
+  repository: gcr.io/alternative-363010/ckan-alternative
+  # repository: ckan-alternative
+  tag: latest
+  pullPolicy: IfNotPresent
+
+ckan:
+  siteUrl: "siteUrl"
+  siteTitle: ALTERNATIVE
+  sysadminApiToken: "token"
+  smtp:
+    server: "server:port"
+    user: "user"
+    password: "pass"
+    mailFrom: "from"

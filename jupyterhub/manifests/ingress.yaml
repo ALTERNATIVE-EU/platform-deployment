@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "jupyterhub"
+  namespace: "default"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+spec:
+  tls:
+  - hosts:
+    - "host"
+    secretName: "cert-jupyterhub"
+  rules:
+  - host: "host"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "jupyterhub"
+            port:
+              number: 80

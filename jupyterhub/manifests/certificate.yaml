@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "jupyterhub"
+  namespace: "default"
+spec:
+  secretName: "cert-jupyterhub"
+  dnsNames:
+  - "dnsName"
+  issuerRef:
+    name: daiteap-clusterissuer
+    kind: ClusterIssuer
