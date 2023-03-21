@@ -97,6 +97,8 @@ RUN rm ./activate_conda.sh
 RUN mkdir /var/alternative-anaconda/init-home
 RUN cp -R /home/jovyan/ /var/alternative-anaconda/init-home/
 
+COPY python_kernel.json /usr/local/share/jupyter/kernels/python3/kernel.json
+
 WORKDIR ${HOME}
 
 EXPOSE 8888
