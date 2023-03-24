@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          initContainers:
+            - name: dump
+              image: docker.io/bitnami/postgresql:11.10.0-debian-10-r24
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - name: data
+                  mountPath: /backup
+              args:
+                - pg_dump
+                - "-Fc"
+                - "-v"
+                - "-f"
+                - "/backup/postgres.dump"
+              env:
+                - name: PGHOSTADDR
+                  value: "postgress_pod_ip"
+                - name: PGPORT
+                  value: "postgress_port"
+                - name: PGDATABASE
+                  value: "ckan_database"
+                - name: PGUSER
+                  value: "postgres_user"
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgrescredentials
+                      key: postgresql-password
+          containers:
+            - name: save
+              image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - name: data
+                  mountPath: /backup
+                - name: backup-credentials
+                  mountPath: "backup_credentials.json"
+                  subPath: backup_credentials
+              command:
+                [
+                  "/bin/bash",
+                  "-c",
+                  "gcloud auth activate-service-account --key-file=backup_credentials.json && gcloud storage cp /backup/postgres.dump gs://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump",
+                ]
+              env:
+                - name: BUCKET
+                  value: "backups-bucket"
+          restartPolicy: Never
+          volumes:
+            - name: data
+              emptyDir: {}
+            - name: backup-credentials
+              secret:
+                secretName: backup-credentials
