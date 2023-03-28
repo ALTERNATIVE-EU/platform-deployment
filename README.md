@@ -117,9 +117,9 @@ helm install -f ./jupyterhub/config.yaml alternative-jupyterhub ./jupyterhub/cha
 
 ## Backup Jobs
 
-1. Update `deployment/manifests/postgres_backup.yaml` and `deployment/manifests/backup_credentials.yaml`
+1. Update the configurations in `deployment/manifests/backup_job.yaml` and `deployment/manifests/backup_credentials.yaml`
 2. Apply the files
 ```
 kubectl apply -f ./deployment/manifests/backup_credentials.yaml
-kubectl apply -f ./deployment/manifests/postgres_backup.yaml
+kubectl apply -f ./deployment/manifests/backup_job.yaml
 ```

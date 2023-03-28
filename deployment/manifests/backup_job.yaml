@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: postgres-backup
+  name: backup
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "@daily"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   jobTemplate:
@@ -12,7 +12,7 @@ spec:
       template:
         spec:
           initContainers:
-            - name: dump
+            - name: dump-postgres
               image: docker.io/bitnami/postgresql:11.10.0-debian-10-r24
               imagePullPolicy: IfNotPresent
               volumeMounts:
@@ -38,6 +38,25 @@ spec:
                     secretKeyRef:
                       name: postgrescredentials
                       key: postgresql-password
+            - name: dump-solr
+              image: ellerbrock/alpine-bash-curl-ssl
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+              - mountPath: /backup
+                name: solr-pvc
+              command:
+                [
+                  "/bin/bash",
+                  "-c",
+                  'curl -H "Content-type:application/json" "http://$SOLRADDRESS:$SOLRPORT/solr/admin/collections?action=BACKUP&collection=$SOLRCOLLECTION&name=solr.dump&location=/opt/solr/server/home"'
+                ]
+              env:
+                - name: SOLRADDRESS
+                  value: "solr_pod_ip"
+                - name: SOLRPORT
+                  value: "solr_port"
+                - name: SOLRCOLLECTION
+                  value: "solr_collection"
           containers:
             - name: save
               image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
@@ -45,6 +64,8 @@ spec:
               volumeMounts:
                 - name: data
                   mountPath: /backup
+                - name: solr-pvc
+                  mountPath: /backup-solr
                 - name: backup-credentials
                   mountPath: "backup_credentials.json"
                   subPath: backup_credentials
@@ -52,7 +73,7 @@ spec:
                 [
                   "/bin/bash",
                   "-c",
-                  "gcloud auth activate-service-account --key-file=backup_credentials.json && gcloud storage cp /backup/postgres.dump gs://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump",
+                  "gcloud auth activate-service-account --key-file=backup_credentials.json ; gcloud storage cp /backup/postgres.dump gs://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump ; gcloud storage cp --recursive /backup-solr/solr.dump gs://$BUCKET/solr/solr-$(date +'%d-%m-%Y').dump && rm -rf /backup-solr/solr.dump"
                 ]
               env:
                 - name: BUCKET
@@ -61,6 +82,9 @@ spec:
           volumes:
             - name: data
               emptyDir: {}
+            - name: solr-pvc
+              persistentVolumeClaim:
+                claimName: solr-pvc-solr-0
             - name: backup-credentials
               secret:
                 secretName: backup-credentials
