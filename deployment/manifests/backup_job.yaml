@@ -26,9 +26,9 @@ spec:
                 - "/backup/postgres.dump"
               env:
                 - name: PGHOSTADDR
-                  value: "postgress_pod_ip"
+                  value: "postgres_pod_ip"
                 - name: PGPORT
-                  value: "postgress_port"
+                  value: "postgres_port"
                 - name: PGDATABASE
                   value: "ckan_database"
                 - name: PGUSER
@@ -57,6 +57,32 @@ spec:
                   value: "solr_port"
                 - name: SOLRCOLLECTION
                   value: "solr_collection"
+            - name: dump-keycloak
+              image: docker.io/bitnami/postgresql:14.2.0-debian-10-r70
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - name: data
+                  mountPath: /backup
+              args:
+                - pg_dump
+                - "-Fc"
+                - "-v"
+                - "-f"
+                - "/backup/keycloak.dump"
+              env:
+                - name: PGHOSTADDR
+                  value: "keycloak_postgresql_pod_ip"
+                - name: PGPORT
+                  value: "keycloak_postgresql_port"
+                - name: PGDATABASE
+                  value: "keycloak_database"
+                - name: PGUSER
+                  value: "keycloak_postgresql_user"
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: keycloak-postgresql
+                      key: password
           containers:
             - name: save
               image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
@@ -73,7 +99,7 @@ spec:
                 [
                   "/bin/bash",
                   "-c",
-                  "gcloud auth activate-service-account --key-file=backup_credentials.json ; gcloud storage cp /backup/postgres.dump gs://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump ; gcloud storage cp --recursive /backup-solr/solr.dump gs://$BUCKET/solr/solr-$(date +'%d-%m-%Y').dump && rm -rf /backup-solr/solr.dump"
+                  "gcloud auth activate-service-account --key-file=backup_credentials.json ; gcloud storage cp /backup/postgres.dump gs://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump ; gcloud storage cp --recursive /backup-solr/solr.dump gs://$BUCKET/solr/solr-$(date +'%d-%m-%Y').dump ; rm -rf /backup-solr/solr.dump ; gcloud storage cp /backup/keycloak.dump gs://$BUCKET/keycloak/keycloak-$(date +'%d-%m-%Y').dump"
                 ]
               env:
                 - name: BUCKET
