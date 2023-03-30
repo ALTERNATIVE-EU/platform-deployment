@@ -1,7 +1,7 @@
 singleuser:
   image:
     name: gcr.io/alternative-363010/alternative-singleuser
-    tag: "v0.0.3"
+    tag: "v0.0.5"
     pullPolicy: Always
   cmd: /var/alternative-anaconda/init.sh
   storage:
@@ -13,6 +13,8 @@ singleuser:
     extraVolumeMounts:
       - name: jupyterhub-shared
         mountPath: /home/shared
+  extraEnv:
+    PATH: /var/alternative-anaconda/anaconda3/bin:/var/alternative-anaconda/anaconda3/condabin:/usr/local/bin:/usr/bin:/bin
 hub:
   config:
     GenericOAuthenticator:

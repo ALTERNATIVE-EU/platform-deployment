@@ -49,6 +49,9 @@ RUN apt-get update \
         git \
         # anaconda
         wget \
+        openssh-client \
+        sudo \
+        iproute2 \
  && rm -rf /var/lib/apt/lists/*
 
 # set pip's cache directory using this environment variable, and use
@@ -96,6 +99,8 @@ RUN rm ./activate_conda.sh
 
 RUN mkdir /var/alternative-anaconda/init-home
 RUN cp -R /home/jovyan/ /var/alternative-anaconda/init-home/
+
+COPY python_kernel.json /usr/local/share/jupyter/kernels/python3/kernel.json
 
 WORKDIR ${HOME}
 

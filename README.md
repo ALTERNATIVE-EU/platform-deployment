@@ -107,6 +107,17 @@ kubectl apply -f ./jupyterhub/manifests/pvc.yaml
 kubectl apply -f ./jupyterhub/manifests/pv.yaml
 ```
 
+### Build Custom Image
+
+1. Build a new docker image
+```
+DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t gcr.io/alternative-363010/alternative-singleuser
+```
+2. Push the new image
+```
+docker push gcr.io/alternative-363010/alternative-singleuser
+```
+
 ### Install Helm Chart
 
 1. Update the parameters in `jupyterhub/config.yaml`
