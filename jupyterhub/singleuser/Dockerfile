@@ -49,6 +49,9 @@ RUN apt-get update \
         git \
         # anaconda
         wget \
+        openssh-client \
+        sudo \
+        iproute2 \
  && rm -rf /var/lib/apt/lists/*
 
 # set pip's cache directory using this environment variable, and use
