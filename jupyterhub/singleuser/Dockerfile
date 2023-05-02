@@ -52,6 +52,9 @@ RUN apt-get update \
         openssh-client \
         sudo \
         iproute2 \
+        # R
+        r-base \
+        r-base-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # set pip's cache directory using this environment variable, and use
