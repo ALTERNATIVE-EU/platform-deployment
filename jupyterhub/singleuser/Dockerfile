@@ -52,7 +52,20 @@ RUN apt-get update \
         openssh-client \
         sudo \
         iproute2 \
+        # R
+        gpg \
+        dirmngr \
+        gpg-agent \
  && rm -rf /var/lib/apt/lists/*
+
+# Install R
+RUN gpg --keyserver keyserver.ubuntu.com \
+    --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
+RUN gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' | \
+    sudo tee /etc/apt/trusted.gpg.d/cran_debian_key.asc
+RUN echo deb http://cloud.r-project.org/bin/linux/debian bullseye-cran40/ >> /etc/apt/sources.list
+RUN apt-get update && apt-get install -y r-base r-base-dev
+RUN chmod -R o+rwx /home/jovyan/.gnupg
 
 # set pip's cache directory using this environment variable, and use
 # ARG instead of ENV to ensure its only set when the image is built
