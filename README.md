@@ -96,26 +96,22 @@ kubectl apply -f ./jupyterhub/manifests/certificate.yaml
 kubectl apply -f ./jupyterhub/manifests/ingress.yaml
 ```
 
-### Create Bucket Volume
+### Create Shared Jupyter Volume
 
-1. Update `bucketName` and `pathToGCPCredsJsonFile`
-2. Create volume resources
+1. Create pvc resource
 ```
-kubectl apply -k "github.com/ofek/csi-gcs/deploy/overlays/stable?ref=v0.9.0"
-kubectl create secret generic csi-gcs-secret --from-literal=bucket=bucketName --from-file=key=pathToGCPCredsJsonFile
 kubectl apply -f ./jupyterhub/manifests/pvc.yaml
-kubectl apply -f ./jupyterhub/manifests/pv.yaml
 ```
 
 ### Build Custom Image
 
 1. Build a new docker image
 ```
-DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t gcr.io/alternative-363010/alternative-singleuser
+DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t gcr.io/alternative-363010/alternative-singleuser:v0.0.7
 ```
 2. Push the new image
 ```
-docker push gcr.io/alternative-363010/alternative-singleuser
+docker push gcr.io/alternative-363010/alternative-singleuser:v0.0.7
 ```
 
 ### Install Helm Chart
