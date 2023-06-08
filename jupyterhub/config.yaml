@@ -9,7 +9,7 @@ singleuser:
     extraVolumes:
       - name: jupyterhub-shared
         persistentVolumeClaim:
-          claimName: csi-gcs-pvc
+          claimName: jupyter-shared-directory-pvc
     extraVolumeMounts:
       - name: jupyterhub-shared
         mountPath: /home/shared

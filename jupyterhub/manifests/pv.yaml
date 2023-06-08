@@ -5,6 +5,9 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
+  mountOptions:
+  - --dir-mode=0777
+  - --file-mode=0777
   capacity:
     storage: 5Gi
   persistentVolumeReclaimPolicy: Retain
