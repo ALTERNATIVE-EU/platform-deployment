@@ -98,6 +98,9 @@ RUN rm ./Anaconda3-2022.10-Linux-x86_64.sh
 RUN touch /home/jovyan/.bashrc
 RUN echo 'export PATH=/var/alternative-anaconda/anaconda3/bin:$PATH' >> /home/jovyan/.bashrc
 
+# Create symlink to shared directory
+RUN ln -s /home/shared /home/jovyan/shared
+
 RUN /var/alternative-anaconda/anaconda3/bin/conda install -c conda-forge jupyterlab
 RUN /var/alternative-anaconda/anaconda3/bin/conda install -c conda-forge notebook
 RUN /var/alternative-anaconda/anaconda3/bin/conda install -c conda-forge nb_conda
