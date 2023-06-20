@@ -14,6 +14,7 @@ singleuser:
       - name: jupyterhub-shared
         mountPath: /home/shared
   extraEnv:
+    SHELL: /bin/bash
     PATH: /var/alternative-anaconda/anaconda3/bin:/var/alternative-anaconda/anaconda3/condabin:/usr/local/bin:/usr/bin:/bin
 hub:
   config:
