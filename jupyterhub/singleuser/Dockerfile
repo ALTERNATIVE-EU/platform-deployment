@@ -45,6 +45,7 @@ RUN apt-get update \
         iputils-ping \
         tini \
         vim \
+        procps \
         # requirement for nbgitpuller
         git \
         # anaconda
