@@ -56,6 +56,7 @@ RUN apt-get update \
         gpg \
         dirmngr \
         gpg-agent \
+        libcurl4-openssl-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # Install R

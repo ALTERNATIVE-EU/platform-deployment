@@ -1,7 +1,7 @@
 singleuser:
   image:
     name: gcr.io/alternative-363010/alternative-singleuser
-    tag: "v0.0.8"
+    tag: "v0.0.9"
     pullPolicy: Always
   cmd: /var/alternative-anaconda/init.sh
   storage:
