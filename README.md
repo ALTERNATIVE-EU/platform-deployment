@@ -43,6 +43,71 @@ kubectl get secret keycloak -o jsonpath='{.data.admin-password}'|base64 --decode
 6. Configure realm email settings
 7. Enable `Forgot password` functionality
 
+### Restore Keycloak Backup
+
+1. Install the helm chart and wait for the pods to be ready and running
+```
+helm install -f ./deployment/charts/keycloak/values.yaml keycloak ./deployment/charts/keycloak/ --namespace default
+```
+
+2. Copy the `.dump` file to the Keycloak DB pod
+```
+kubectl cp keycloak.dump keycloak-postgresql-0:/tmp/backup.dump
+```
+
+3. Remove Keycloak pod
+```
+kubectl scale statefulsets keycloak --replicas=0
+```
+
+4. Get PostgreSQL password
+```
+kubectl get secret keycloak-postgresql -o jsonpath='{.data.password}' | base64 --decode
+```
+
+5. Enter Keycloak DB pod
+```
+kubectl exec -it keycloak-postgresql-0 /bin/bash
+```
+
+6. Set environment variables (replace `pass` with the PostgreSQL password)
+```
+export PGDATABASE=bitnami_keycloak
+export PGUSER=bn_keycloak
+export PGPASSWORD=pass
+```
+
+7. Recreate the DB from the backup file
+```
+dropdb -f $PGDATABASE
+createdb $PGDATABASE
+pg_restore -d $PGDATABASE /tmp/backup.dump
+```
+
+8. Restoring fron the backup recreates the main user of Keycloak so the password in the secret will no longer be correct, to fix that:
+- Start PostgreSQL console with `psql`
+- Get the user ID of user with username `user`
+```
+select id from user_entity where "username"='user';
+```
+- Run these queries (replace `usr_id`)
+```
+delete from credential where "user_id"='usr_id';
+delete from user_role_mapping where "user_id"='usr_id';
+delete from user_entity where "id"='usr_id';
+```
+- Exit DB pod, delete it with the below command and wait for it to be recreated, ready and running again
+```
+kubectl delete pod keycloak-postgresql-0
+```
+
+9. Recreate Keycloak pod
+```
+kubectl scale statefulsets keycloak --replicas=1
+```
+
+10. Enter Keycloak with username `user` and password from this command `kubectl get secret keycloak -o jsonpath='{.data.admin-password}' | base64 --decode` and check if everything got recovered
+
 ## Build ALTERNATIVE CKAN Docker Image
 
 1. Update credentials in `ckan-alternative-theme/alternative-gcp-credentials.json`
