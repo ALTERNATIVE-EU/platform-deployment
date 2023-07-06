@@ -143,6 +143,45 @@ Add users in Keycloak, sysadmin users should be in the group `admins`
 
 From sysadmin settings, change the logo with `../ckanext-alternative_theme/ckanext/alternative_theme/public/images/fulllogo_transparent.png` and update the rest of the options as you wish
 
+## Restore CKAN PostgreSQL Backup
+
+1. Copy the `.dump` file to the DB pod
+```
+kubectl cp postgres.dump postgres-0:/tmp/backup.dump
+```
+
+2. Get PostgreSQL password
+```
+kubectl get secret postgrescredentials -o jsonpath='{.data.postgresql-password}' | base64 --decode
+```
+
+3. Enter DB pod
+```
+kubectl exec -it postgres-0 /bin/bash
+```
+
+4. Set environment variables (replace `pass` with the PostgreSQL password)
+```
+export PGDATABASE=ckan_default
+export PGUSER=postgres
+export PGPASSWORD=pass
+```
+
+5. Restore the DB from the backup file
+```
+pg_restore -d $PGDATABASE /tmp/backup.dump --clean --if-exists
+```
+
+6. Enter the CKAN pod (replace `ckan-pod` with the actual pod name)
+```
+kubectl exec -it ckan-pod /bin/bash
+```
+
+7. Rebuild the search index for datasets to be listed correctly
+```
+ckan -c production.ini search-index rebuild
+```
+
 ## Install Jupyterhub
 
 ### Create Certificate
