@@ -8,5 +8,5 @@ spec:
   dnsNames:
   - "dnsName"
   issuerRef:
-    name: daiteap-clusterissuer
+    name: cluster-issuer-letsencrypt
     kind: ClusterIssuer

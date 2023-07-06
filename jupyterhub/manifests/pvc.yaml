@@ -5,8 +5,7 @@ metadata:
   namespace: default
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: longhorn
+    - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi
