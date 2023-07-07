@@ -172,7 +172,7 @@ export PGPASSWORD=pass
 pg_restore -d $PGDATABASE /tmp/backup.dump --clean --if-exists
 ```
 
-6. Enter the CKAN pod (replace `ckan-pod` with the actual pod name)
+6. Exit the DB pod with `exit` and enter the CKAN pod (replace `ckan-pod` with the actual pod name)
 ```
 kubectl exec -it ckan-pod /bin/bash
 ```
