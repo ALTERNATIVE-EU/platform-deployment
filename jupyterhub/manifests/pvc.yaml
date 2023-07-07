@@ -1,11 +1,15 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jupyter-shared-directory-pvc
+  name: nfs-pvc
   namespace: default
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
+  storageClassName: ""
   resources:
     requests:
       storage: 20Gi
+  selector:
+    matchLabels:
+      app: nfs-data
