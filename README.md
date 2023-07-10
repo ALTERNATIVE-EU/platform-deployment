@@ -84,7 +84,7 @@ createdb $PGDATABASE
 pg_restore -d $PGDATABASE /tmp/backup.dump
 ```
 
-8. Restoring fron the backup recreates the main user of Keycloak so the password in the secret will no longer be correct, to fix that:
+8. Restoring from the backup recreates the main user of Keycloak so the password in the secret will no longer be correct, to fix that:
 - Start PostgreSQL console with `psql`
 - Get the user ID of user with username `user`
 ```
