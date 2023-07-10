@@ -98,7 +98,20 @@ kubectl apply -f ./jupyterhub/manifests/ingress.yaml
 
 ### Create Shared Jupyter Volume
 
-1. Create pvc resource
+1. Create NFS required pvc resource
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/pvc.yaml
+```
+2. Create NFS resources
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/deployment.yaml
+kubectl apply -f ./jupyterhub/manifests/nfs/service.yaml
+```
+3. Create Persistent volume required for shared PVC
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/pv.yaml
+```
+4. Create shared PVC
 ```
 kubectl apply -f ./jupyterhub/manifests/pvc.yaml
 ```

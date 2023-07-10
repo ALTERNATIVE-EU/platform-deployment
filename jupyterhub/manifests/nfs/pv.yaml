@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: nfs-pv
+  namespace: alternative
   labels:
     app: nfs-data
 spec:

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nfs-server
-  namespace: default
+  namespace: alternative
 spec:
   selector:
     matchLabels:
