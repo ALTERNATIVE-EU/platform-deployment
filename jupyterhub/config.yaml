@@ -1,7 +1,10 @@
+prePuller:
+  hook:
+    enabled: false
 singleuser:
   image:
-    name: gcr.io/alternative-363010/alternative-singleuser
-    tag: "v0.0.9"
+    name: alternative.cr.de-fra.ionos.com/alternative-singleuser
+    tag: "v0.0.7"
     pullPolicy: Always
   cmd: /var/alternative-anaconda/init.sh
   storage:
@@ -9,7 +12,7 @@ singleuser:
     extraVolumes:
       - name: jupyterhub-shared
         persistentVolumeClaim:
-          claimName: jupyter-shared-directory-pvc
+          claimName: nfs-pvc
     extraVolumeMounts:
       - name: jupyterhub-shared
         mountPath: /home/shared

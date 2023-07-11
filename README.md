@@ -98,7 +98,20 @@ kubectl apply -f ./jupyterhub/manifests/ingress.yaml
 
 ### Create Shared Jupyter Volume
 
-1. Create pvc resource
+1. Create NFS required pvc resource
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/pvc.yaml
+```
+2. Create NFS resources
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/deployment.yaml
+kubectl apply -f ./jupyterhub/manifests/nfs/service.yaml
+```
+3. Create Persistent volume required for shared PVC
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/pv.yaml
+```
+4. Create shared PVC
 ```
 kubectl apply -f ./jupyterhub/manifests/pvc.yaml
 ```
@@ -107,11 +120,11 @@ kubectl apply -f ./jupyterhub/manifests/pvc.yaml
 
 1. Build a new docker image
 ```
-DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t gcr.io/alternative-363010/alternative-singleuser:v0.0.7
+DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t alternative.cr.de-fra.ionos.com/alternative-singleuser:v0.0.7
 ```
 2. Push the new image
 ```
-docker push gcr.io/alternative-363010/alternative-singleuser:v0.0.7
+docker push alternative.cr.de-fra.ionos.com/alternative-singleuser:v0.0.7
 ```
 
 ### Install Helm Chart
