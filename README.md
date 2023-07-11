@@ -120,11 +120,11 @@ kubectl apply -f ./jupyterhub/manifests/pvc.yaml
 
 1. Build a new docker image
 ```
-DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t gcr.io/alternative-363010/alternative-singleuser:v0.0.7
+DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t alternative.cr.de-fra.ionos.com/alternative-singleuser:v0.0.7
 ```
 2. Push the new image
 ```
-docker push gcr.io/alternative-363010/alternative-singleuser:v0.0.7
+docker push alternative.cr.de-fra.ionos.com/alternative-singleuser:v0.0.7
 ```
 
 ### Install Helm Chart

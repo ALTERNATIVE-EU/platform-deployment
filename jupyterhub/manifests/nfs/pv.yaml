@@ -11,7 +11,7 @@ spec:
   accessModes:
     - ReadWriteMany
   nfs:
-    server: "nfs-service.default.svc.cluster.local"
+    server: "nfs-service.alternative.svc.cluster.local"
     path: "/"
   mountOptions:
     - soft
