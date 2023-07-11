@@ -43,6 +43,71 @@ kubectl get secret keycloak -o jsonpath='{.data.admin-password}'|base64 --decode
 6. Configure realm email settings
 7. Enable `Forgot password` functionality
 
+### Restore Keycloak Backup
+
+1. Install the helm chart and wait for the pods to be ready and running
+```
+helm install -f ./deployment/charts/keycloak/values.yaml keycloak ./deployment/charts/keycloak/ --namespace default
+```
+
+2. Copy the `.dump` file to the Keycloak DB pod
+```
+kubectl cp keycloak.dump keycloak-postgresql-0:/tmp/backup.dump
+```
+
+3. Remove Keycloak pod
+```
+kubectl scale statefulsets keycloak --replicas=0
+```
+
+4. Get PostgreSQL password
+```
+kubectl get secret keycloak-postgresql -o jsonpath='{.data.password}' | base64 --decode
+```
+
+5. Enter Keycloak DB pod
+```
+kubectl exec -it keycloak-postgresql-0 /bin/bash
+```
+
+6. Set environment variables (replace `pass` with the PostgreSQL password)
+```
+export PGDATABASE=bitnami_keycloak
+export PGUSER=bn_keycloak
+export PGPASSWORD=pass
+```
+
+7. Recreate the DB from the backup file
+```
+dropdb -f $PGDATABASE
+createdb $PGDATABASE
+pg_restore -d $PGDATABASE /tmp/backup.dump
+```
+
+8. Restoring from the backup recreates the main user of Keycloak so the password in the secret will no longer be correct, to fix that:
+- Start PostgreSQL console with `psql`
+- Get the user ID of user with username `user`
+```
+select id from user_entity where "username"='user';
+```
+- Run these queries (replace `usr_id`)
+```
+delete from credential where "user_id"='usr_id';
+delete from user_role_mapping where "user_id"='usr_id';
+delete from user_entity where "id"='usr_id';
+```
+- Exit DB pod, delete it with the below command and wait for it to be recreated, ready and running again
+```
+kubectl delete pod keycloak-postgresql-0
+```
+
+9. Recreate Keycloak pod
+```
+kubectl scale statefulsets keycloak --replicas=1
+```
+
+10. Enter Keycloak with username `user` and password from this command `kubectl get secret keycloak -o jsonpath='{.data.admin-password}' | base64 --decode` and check if everything got recovered
+
 ## Build ALTERNATIVE CKAN Docker Image
 
 1. Update credentials in `ckan-alternative-theme/alternative-gcp-credentials.json`
@@ -78,6 +143,45 @@ Add users in Keycloak, sysadmin users should be in the group `admins`
 
 From sysadmin settings, change the logo with `../ckanext-alternative_theme/ckanext/alternative_theme/public/images/fulllogo_transparent.png` and update the rest of the options as you wish
 
+## Restore CKAN PostgreSQL Backup
+
+1. Copy the `.dump` file to the DB pod
+```
+kubectl cp postgres.dump postgres-0:/tmp/backup.dump
+```
+
+2. Get PostgreSQL password
+```
+kubectl get secret postgrescredentials -o jsonpath='{.data.postgresql-password}' | base64 --decode
+```
+
+3. Enter DB pod
+```
+kubectl exec -it postgres-0 /bin/bash
+```
+
+4. Set environment variables (replace `pass` with the PostgreSQL password)
+```
+export PGDATABASE=ckan_default
+export PGUSER=postgres
+export PGPASSWORD=pass
+```
+
+5. Restore the DB from the backup file
+```
+pg_restore -d $PGDATABASE /tmp/backup.dump --clean --if-exists
+```
+
+6. Exit the DB pod with `exit` and enter the CKAN pod (replace `ckan-pod` with the actual pod name)
+```
+kubectl exec -it ckan-pod /bin/bash
+```
+
+7. Rebuild the search index for datasets to be listed correctly
+```
+ckan -c production.ini search-index rebuild
+```
+
 ## Install Jupyterhub
 
 ### Create Certificate
@@ -98,7 +202,20 @@ kubectl apply -f ./jupyterhub/manifests/ingress.yaml
 
 ### Create Shared Jupyter Volume
 
-1. Create pvc resource
+1. Create NFS required pvc resource
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/pvc.yaml
+```
+2. Create NFS resources
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/deployment.yaml
+kubectl apply -f ./jupyterhub/manifests/nfs/service.yaml
+```
+3. Create Persistent volume required for shared PVC
+```
+kubectl apply -f ./jupyterhub/manifests/nfs/pv.yaml
+```
+4. Create shared PVC
 ```
 kubectl apply -f ./jupyterhub/manifests/pvc.yaml
 ```
@@ -107,11 +224,11 @@ kubectl apply -f ./jupyterhub/manifests/pvc.yaml
 
 1. Build a new docker image
 ```
-DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t gcr.io/alternative-363010/alternative-singleuser:v0.0.7
+DOCKER_BUILDKIT=1 docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t alternative.cr.de-fra.ionos.com/alternative-singleuser:v0.0.7
 ```
 2. Push the new image
 ```
-docker push gcr.io/alternative-363010/alternative-singleuser:v0.0.7
+docker push alternative.cr.de-fra.ionos.com/alternative-singleuser:v0.0.7
 ```
 
 ### Install Helm Chart
