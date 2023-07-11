@@ -13,7 +13,7 @@ spec:
         spec:
           initContainers:
             - name: dump-postgres
-              image: docker.io/bitnami/postgresql:11.10.0-debian-10-r24
+              image: docker.io/bitnami/postgresql:11.14.0-debian-10-r28
               imagePullPolicy: IfNotPresent
               volumeMounts:
                 - name: data
@@ -41,9 +41,6 @@ spec:
             - name: dump-solr
               image: ellerbrock/alpine-bash-curl-ssl
               imagePullPolicy: IfNotPresent
-              volumeMounts:
-              - mountPath: /backup
-                name: solr-pvc
               command:
                 [
                   "/bin/bash",
@@ -85,25 +82,34 @@ spec:
                       key: password
           containers:
             - name: save
-              image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+              image: d3fk/s3cmd
               imagePullPolicy: IfNotPresent
               volumeMounts:
                 - name: data
                   mountPath: /backup
                 - name: solr-pvc
                   mountPath: /backup-solr
-                - name: backup-credentials
-                  mountPath: "backup_credentials.json"
-                  subPath: backup_credentials
               command:
                 [
-                  "/bin/bash",
+                  "/bin/sh",
                   "-c",
-                  "gcloud auth activate-service-account --key-file=backup_credentials.json ; gcloud storage cp /backup/postgres.dump gs://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump ; gcloud storage cp --recursive /backup-solr/solr.dump gs://$BUCKET/solr/solr-$(date +'%d-%m-%Y').dump ; rm -rf /backup-solr/solr.dump ; gcloud storage cp /backup/keycloak.dump gs://$BUCKET/keycloak/keycloak-$(date +'%d-%m-%Y').dump"
+                  "s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put /backup/postgres.dump s3://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump ; s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put --recursive /backup-solr/solr.dump/ s3://$BUCKET/solr/solr-$(date +'%d-%m-%Y').dump/ ; rm -rf /backup-solr/solr.dump ; s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put /backup/keycloak.dump s3://$BUCKET/keycloak/keycloak-$(date +'%d-%m-%Y').dump"
                 ]
               env:
                 - name: BUCKET
-                  value: "backups-bucket"
+                  value: "bucket_name"
+                - name: HOST
+                  value: "s3_host"
+                - name: S3_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: backup-credentials
+                      key: s3_key
+                - name: S3_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: backup-credentials
+                      key: s3_secret
           restartPolicy: Never
           volumes:
             - name: data
@@ -111,6 +117,3 @@ spec:
             - name: solr-pvc
               persistentVolumeClaim:
                 claimName: solr-pvc-solr-0
-            - name: backup-credentials
-              secret:
-                secretName: backup-credentials
