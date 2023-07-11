@@ -93,7 +93,7 @@ spec:
                 [
                   "/bin/sh",
                   "-c",
-                  "s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put /backup/postgres.dump s3://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump ; s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put --recursive /backup-solr/solr.dump s3://$BUCKET/solr/solr-$(date +'%d-%m-%Y').dump/ ; rm -rf /backup-solr/solr.dump ; s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put /backup/keycloak.dump s3://$BUCKET/keycloak/keycloak-$(date +'%d-%m-%Y').dump"
+                  "s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put /backup/postgres.dump s3://$BUCKET/postgres/postgres-$(date +'%d-%m-%Y').dump ; s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put --recursive /backup-solr/solr.dump/ s3://$BUCKET/solr/solr-$(date +'%d-%m-%Y').dump/ ; rm -rf /backup-solr/solr.dump ; s3cmd --host=$HOST --access_key=$S3_KEY --secret_key=$S3_SECRET --host-bucket=$BUCKET.$HOST put /backup/keycloak.dump s3://$BUCKET/keycloak/keycloak-$(date +'%d-%m-%Y').dump"
                 ]
               env:
                 - name: BUCKET
