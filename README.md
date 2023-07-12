@@ -110,14 +110,13 @@ kubectl scale statefulsets keycloak --replicas=1
 
 ## Build ALTERNATIVE CKAN Docker Image
 
-1. Update credentials in `ckan-alternative-theme/alternative-gcp-credentials.json`
-2. Update configs in `ckan-alternative-theme/keycloak_auth-config` and `ckan-alternative-theme/cloudstorage-config`
-3. Copy the CKAN extensions into `ckan-alternative-theme`
-4. Build the image
+1. Update configs in `ckan-alternative-theme/keycloak_auth-config` and `ckan-alternative-theme/cloudstorage-config`
+2. Copy the CKAN extensions into `ckan-alternative-theme`
+3. Build the image
 ```
 docker build -f ./ckan-alternative-theme/AlternativeCKAN ./ckan-alternative-theme -t gcr.io/alternative-363010/ckan-alternative
 ```
-5. Upload the image to the registry
+4. Upload the image to the registry
 ```
 docker push gcr.io/alternative-363010/ckan-alternative
 ```

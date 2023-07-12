@@ -1,3 +1,3 @@
-ckanext.cloudstorage.driver = provider
-ckanext.cloudstorage.container_name = bucket
-ckanext.cloudstorage.google_creds = /srv/app/alternative-gcp-credentials.json
+ckanext.cloudstorage.driver = S3
+ckanext.cloudstorage.container_name = alternative-datasets
+ckanext.cloudstorage.driver_options = {'host': 's3-eu-central-1.ionoscloud.com', 'key': '', 'secret': '' }

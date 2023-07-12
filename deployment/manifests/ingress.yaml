@@ -2,31 +2,40 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "alternative"
-  namespace: "default"
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/cluster-issuer: cluster-issuer-letsencrypt
+    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.class: nginx
+    meta.helm.sh/release-name: ckan
+    meta.helm.sh/release-namespace: alternative
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.org/client-max-body-size: "1024m"
+  name: redirect-ckan
+  namespace: alternative
 spec:
-  tls:
-  - hosts:
-    - "host"
-    secretName: "cert-alternative"
   rules:
   - host: "host"
     http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend:
+      - backend:
           service:
-            name: "ckan"
+            name: ckan
             port:
               number: 80
-      - path: /auth/
+        path: /
         pathType: Prefix
-        backend:
+      - backend:
           service:
-            name: "keycloak"
+            name: keycloak
             port:
               number: 80
+        path: /auth/
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "host"
+    secretName: ckan-old-tls

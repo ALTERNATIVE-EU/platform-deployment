@@ -1,7 +1,7 @@
 image:
-  repository: gcr.io/alternative-363010/ckan-alternative
+  repository: alternative.cr.de-fra.ionos.com/ckan-alternative
   # repository: ckan-alternative
-  tag: latest
+  tag: v1.0.0
   pullPolicy: IfNotPresent
 
 ckan:
@@ -13,3 +13,9 @@ ckan:
     user: "user"
     password: "pass"
     mailFrom: "from"
+
+pvc:
+  enabled: true
+  size: "1Gi"
+  storageClassName: "ionos-enterprise-hdd"
+  accessmode: "ReadWriteOnce"
