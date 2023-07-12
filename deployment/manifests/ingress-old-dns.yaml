@@ -1,0 +1,16 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: redirect-ckan
+  namespace: alternative
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/permanent-redirect: https://new-host$request_uri
+spec:
+  rules:
+  - host: old-host
+  tls:
+    - hosts:
+        - old-host
+      secretName: ckan-old-tls
