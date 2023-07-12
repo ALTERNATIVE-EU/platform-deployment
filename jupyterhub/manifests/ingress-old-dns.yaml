@@ -1,40 +1,16 @@
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    acme.cert-manager.io/http01-edit-in-place: "true"
-    cert-manager.io/cluster-issuer: cluster-issuer-letsencrypt
-    kubernetes.io/ingress.allow-http: "true"
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/affinity: cookie
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      if ($host = 'old-host' ) {
-        return 302 https://new-host$request_uri;
-      }
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: 7200s
-    nginx.ingress.kubernetes.io/proxy-read-timeout: 7200s
-    nginx.ingress.kubernetes.io/proxy-send-timeout: 7200s
-    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
-    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/websocket-services: proxy-public
-    nginx.org/client-max-body-size: 1024m
-    nginx.org/websocket-services: proxy-public
   name: redirect-jupyterhub
   namespace: alternative
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/permanent-redirect: https://new-host$request_uri
 spec:
   rules:
   - host: old-host
-    http:
-      paths:
-      - backend:
-          service:
-            name: proxy-public
-            port:
-              number: 80
-        path: /
-        pathType: Prefix
   tls:
-  - hosts:
-    - old-host
-    secretName: jupyterhub-old-tls
+    - hosts:
+        - old-host
+      secretName: jupyterhub-old-tls
