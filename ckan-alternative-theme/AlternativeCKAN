@@ -14,7 +14,6 @@ COPY dev-requirements.txt /srv/app/dev-requirements.txt
 COPY keycloak_auth-config /srv/app/keycloak_auth-config
 COPY cloudstorage-config /srv/app/cloudstorage-config
 COPY custom-ckan-config /srv/app/custom-ckan-config
-COPY alternative-gcp-credentials.json /srv/app/alternative-gcp-credentials.json
 
 WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-alternative_theme/ckanext-alternative_theme
 RUN pip install -r /srv/app/dev-requirements.txt
