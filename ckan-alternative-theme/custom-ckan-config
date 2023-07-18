@@ -5,3 +5,11 @@ ckan.activity_streams_email_notifications = true
 ckan.resource_proxy.max_file_size = 1073741824
 ckan.max_resource_size = 1024
 ckan.max_image_size = 1024
+
+## CORS Settings
+
+# If cors.origin_allow_all is true, all origins are allowed.
+# If false, the cors.origin_whitelist is used.
+ckan.cors.origin_allow_all = false
+# cors.origin_whitelist is a space separated list of allowed domains.
+ckan.cors.origin_whitelist = https://s3-eu-central-1.ionoscloud.com
