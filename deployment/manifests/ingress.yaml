@@ -14,6 +14,9 @@ metadata:
     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.org/client-max-body-size: "1024m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
   name: redirect-ckan
   namespace: alternative
 spec:
