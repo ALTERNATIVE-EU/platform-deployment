@@ -1,3 +1,5 @@
+replicaCount: 2
+
 image:
   repository: alternative.cr.de-fra.ionos.com/ckan-alternative
   # repository: ckan-alternative
@@ -17,5 +19,5 @@ ckan:
 pvc:
   enabled: true
   size: "1Gi"
-  storageClassName: "ionos-enterprise-hdd"
+  storageClassName: "nfs"
   accessmode: "ReadWriteOnce"

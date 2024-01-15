@@ -121,6 +121,18 @@ docker build -f ./ckan-alternative-theme/AlternativeCKAN ./ckan-alternative-them
 docker push gcr.io/alternative-363010/ckan-alternative
 ```
 
+## Install NFS Provisioner
+
+1. Add helm repo
+```
+helm repo add nfs-ganesha-server-and-external-provisioner https://kubernetes-sigs.github.io/nfs-ganesha-server-and-external-provisioner/
+```
+
+2. Install helm chart
+```
+helm install nfs-ganesha-server nfs-ganesha-server-and-external-provisioner/nfs-server-provisioner -f ./deployment/manifests/nfs_values.yaml --namespace nfs --create-namespace --version 1.8.0
+```
+
 ## Install CKAN
 
 1. Add chart repo
