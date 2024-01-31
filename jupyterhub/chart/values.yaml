@@ -387,7 +387,7 @@ singleuser:
     tag: "2.0.0"
     pullPolicy:
     pullSecrets: []
-  startTimeout: 300
+  startTimeout: 1200
   cpu:
     limit:
     guarantee:
