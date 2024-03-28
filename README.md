@@ -115,7 +115,7 @@ kubectl scale statefulsets keycloak --replicas=1
 ```sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
-helm install demo-postgresql bitnami/postgresql --version 14.1.1 --namespace default --set global.postgresql.auth.postgresPassword=postgres
+helm install alternative-postgresql bitnami/postgresql --version 14.1.1 --namespace default --set global.postgresql.auth.postgresPassword=pass
 
 # Wait until the PostgreSQL pod is ready
 kubectl wait --namespace default \
@@ -127,9 +127,9 @@ kubectl wait --namespace default \
 ### Create table for the revoked tokens
 
 ```sh
-POSTGRES_PASSWORD=$(kubectl get secret --namespace default demo-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
+POSTGRES_PASSWORD=$(kubectl get secret --namespace default alternative-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
 
-kubectl run demo-postgresql-client --rm --tty -i --restart='Never' --namespace demo --image docker.io/bitnami/postgresql:16.2.0-debian-11-r1 --env="PGPASSWORD=$POSTGRES_PASSWORD"       --command -- psql --host demo-postgresql -U postgres -d postgres -p 5432 -c "CREATE TABLE revoked_tokens (jti TEXT PRIMARY KEY, revoked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP);"
+kubectl run alternative-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:16.2.0-debian-11-r1 --env="PGPASSWORD=$POSTGRES_PASSWORD"       --command -- psql --host alternative-postgresql -U postgres -d postgres -p 5432 -c "CREATE TABLE revoked_tokens (jti TEXT PRIMARY KEY, revoked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP);"
 ```
 
 ### Install Istio
