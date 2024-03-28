@@ -1,6 +1,6 @@
 FROM ghcr.io/keitaroinc/ckan:2.9.5
 
-ENV CKAN__PLUGINS envvars stats image_view text_view recline_view datastore datapusher keycloak_auth alternative_theme cloudstorage extrafields
+ENV CKAN__PLUGINS envvars stats image_view text_view recline_view datastore datapusher keycloak_auth alternative_theme cloudstorage extrafields keycloak_access_token
 
 # Switch to the root user
 USER root
@@ -9,6 +9,7 @@ RUN apk add --update musl-dev libffi-dev python3-dev gcc
 
 COPY ./ckanext-alternative_theme /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-alternative_theme/ckanext-alternative_theme
 COPY ./ckanext-keycloak_auth /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_auth/ckanext-keycloak_auth
+COPY ./ckanext-keycloak_access_token /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_access_token/ckanext-keycloak_access_token
 COPY ./ckanext-extrafields /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-extrafields/ckanext-extrafields
 COPY dev-requirements.txt /srv/app/dev-requirements.txt
 COPY keycloak_auth-config /srv/app/keycloak_auth-config
@@ -20,6 +21,9 @@ RUN pip install -r /srv/app/dev-requirements.txt
 RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-alternative_theme/ckanext-alternative_theme/setup.py develop
 WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_auth/ckanext-keycloak_auth
 RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_auth/ckanext-keycloak_auth/setup.py develop
+
+WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_access_token/ckanext-keycloak_access_token
+RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_access_token/ckanext-keycloak_access_token/setup.py develop
 
 WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-extrafields/ckanext-extrafields
 RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-extrafields/ckanext-extrafields/setup.py develop

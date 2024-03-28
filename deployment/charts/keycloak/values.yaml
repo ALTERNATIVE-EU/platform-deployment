@@ -254,7 +254,7 @@ configuration: ""
 existingConfigmap: ""
 ## @param extraStartupArgs Extra default startup args
 ##
-extraStartupArgs: ""
+extraStartupArgs: "-Dkeycloak.profile.feature.token_exchange=enabled -Dkeycloak.profile.feature.admin_fine_grained_authz=enabled"
 ## @param initdbScripts Dictionary of initdb scripts
 ## Specify dictionary of scripts to be run at first boot
 ## ref: https://github.com/bitnami/bitnami-docker-keycloak#initializing-a-new-instance
