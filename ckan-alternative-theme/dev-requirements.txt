@@ -29,3 +29,4 @@ google-auth==2.11.0
 six==1.16.0
 python-slugify==6.1.2
 cryptography==37.0.4
+pyjwt==2.8.0
