@@ -67,6 +67,15 @@
         "attributes": {}
       },
       {
+        "id": "06f6a554-52a2-43b8-a447-0ff059570b29",
+        "name": "jupyterhub-user",
+        "description": "Access to jupyterhub",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "alternative",
+        "attributes": {}
+      },
+      {
         "id": "6d5fc939-8817-4bd5-8ba9-9de5903f065e",
         "name": "offline_access",
         "description": "${role_offline-access}",
@@ -1072,6 +1081,7 @@
         "web-origins",
         "profile",
         "roles",
+        "groups",
         "email"
       ],
       "optionalClientScopes": [
@@ -1700,6 +1710,32 @@
         "consent.screen.text": "${offlineAccessScopeConsentText}",
         "display.on.consent.screen": "true"
       }
+    },
+    {
+      "id": "13ae9f32-ce86-4047-8365-dd4101a12761",
+      "name": "groups",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "id": "377f77ff-6494-47f1-a1b5-3bc994830047",
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "groups",
+            "jsonType.label": "String"
+          }
+        }
+      ]
     },
     {
       "id": "115d8233-dfb4-4960-aba4-b9aa94d44dab",
