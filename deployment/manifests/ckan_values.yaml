@@ -1,3 +1,5 @@
+replicaCount: 2
+
 image:
   repository: alternative.cr.de-fra.ionos.com/ckan-alternative
   # repository: ckan-alternative
