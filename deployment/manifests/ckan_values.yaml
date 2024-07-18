@@ -19,5 +19,13 @@ ckan:
 pvc:
   enabled: true
   size: "1Gi"
-  storageClassName: "nfs"
+  storageClassName: "ionos-enterprise-hdd"
   accessmode: "ReadWriteOnce"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 10m
+    memory: 300Mi

@@ -108,6 +108,55 @@ kubectl scale statefulsets keycloak --replicas=1
 
 10. Enter Keycloak with username `user` and password from this command `kubectl get secret keycloak -o jsonpath='{.data.admin-password}' | base64 --decode` and check if everything got recovered
 
+## Install AI/ML API
+
+### Install PostgreSQL
+
+```sh
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install alternative-postgresql bitnami/postgresql --version 14.1.1 --namespace default --set global.postgresql.auth.postgresPassword=pass
+
+# Wait until the PostgreSQL pod is ready
+kubectl wait --namespace default \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/name=postgresql \
+  --timeout=90s
+```
+
+### Create table for the revoked tokens
+
+```sh
+POSTGRES_PASSWORD=$(kubectl get secret --namespace default alternative-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
+
+kubectl run alternative-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:16.2.0-debian-11-r1 --env="PGPASSWORD=$POSTGRES_PASSWORD"       --command -- psql --host alternative-postgresql -U postgres -d postgres -p 5432 -c "CREATE TABLE revoked_tokens (jti TEXT PRIMARY KEY, revoked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP);"
+```
+
+### Install Istio
+
+```bash
+# Download istio
+curl -L https://istio.io/downloadIstio | sh -
+
+# Move to the istio directory
+cd istio-*
+
+# Add istioctl to the PATH
+export PATH=$PWD/bin:$PATH
+
+# Install istio
+istioctl install --set profile=default -y
+
+# Return to the previous directory
+cd ..
+```
+
+### Install the AI/ML api
+Follow the documentation: https://github.com/ALTERNATIVE-EU/ai-ml-api
+
+### Install the envoy filter
+Follow the documentation: https://github.com/ALTERNATIVE-EU/auth_envoy_filter
+
 ## Build ALTERNATIVE CKAN Docker Image
 
 1. Update configs in `ckan-alternative-theme/keycloak_auth-config` and `ckan-alternative-theme/cloudstorage-config`
