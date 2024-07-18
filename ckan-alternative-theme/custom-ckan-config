@@ -5,7 +5,7 @@ ckan.activity_streams_email_notifications = true
 ckan.resource_proxy.max_file_size = 1073741824
 ckan.max_resource_size = 1024
 ckan.max_image_size = 1024
-ckanext.cloudstorage.use_secure_urls = true
+ckanext.cloudstorage.use_secure_urls = false
 ckanext.cloudstorage.leave_files = false
 
 ## CORS Settings
