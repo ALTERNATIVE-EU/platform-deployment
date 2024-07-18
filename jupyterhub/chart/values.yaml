@@ -87,7 +87,13 @@ hub:
     tag: "3.3.7"
     pullPolicy:
     pullSecrets: []
-  resources: {}
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
   podSecurityContext:
     fsGroup: 1000
   containerSecurityContext:
@@ -221,7 +227,13 @@ proxy:
       periodSeconds: 2
       failureThreshold: 1000
       timeoutSeconds: 1
-    resources: {}
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1024Mi
     defaultTarget:
     errorTarget:
     extraEnv: {}
@@ -348,7 +360,13 @@ singleuser:
       tag: "3.3.7"
       pullPolicy:
       pullSecrets: []
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
   cloudMetadata:
     # block set to true will append a privileged initContainer using the
     # iptables to block the sensitive metadata server at the provided ip.
@@ -530,7 +548,13 @@ scheduling:
       enabled: true
       maxUnavailable: 1
       minAvailable:
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
     serviceAccount:
       create: true
       name:
@@ -562,7 +586,13 @@ scheduling:
       runAsUser: 65534 # nobody user
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
   corePods:
     tolerations:
       - key: hub.jupyter.org/dedicated
@@ -593,7 +623,13 @@ prePuller:
   revisionHistoryLimit:
   labels: {}
   annotations: {}
-  resources: {}
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi
   containerSecurityContext:
     runAsUser: 65534 # nobody user
     runAsGroup: 65534 # nobody group
@@ -616,7 +652,13 @@ prePuller:
     podSchedulingWaitDuration: 10
     nodeSelector: {}
     tolerations: []
-    resources: {}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
     serviceAccount:
       create: true
       name:
