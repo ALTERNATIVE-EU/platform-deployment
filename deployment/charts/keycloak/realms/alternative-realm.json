@@ -755,15 +755,15 @@
     {
       "id": "db27710a-24d6-401b-ba4e-79eed93f88e2",
       "clientId": "ckan-backend",
-      "rootUrl": "url/",
-      "adminUrl": "url/",
+      "rootUrl": "http://localhost/",
+      "adminUrl": "http://localhost/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "url/*"
+        "http://localhost/*"
       ],
       "webOrigins": [
         "*"
@@ -868,14 +868,14 @@
     {
       "id": "f6a6f08e-efbb-4094-b42c-f68b573c21a7",
       "clientId": "ckan-frontend",
-      "rootUrl": "url/",
-      "adminUrl": "url/",
+      "rootUrl": "http://localhost/",
+      "adminUrl": "http://localhost/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "url/*"
+        "http://localhost/*"
       ],
       "webOrigins": [
         "*"
@@ -980,15 +980,15 @@
     {
       "id": "a81dd060-fbcf-4329-a4c8-3e9c950dd252",
       "clientId": "jupyterhub",
-      "rootUrl": "url/",
-      "adminUrl": "url/",
+      "rootUrl": "http://localhost/",
+      "adminUrl": "http://localhost/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "url/*"
+        "http://localhost/*"
       ],
       "webOrigins": [
         "*"
