@@ -159,13 +159,12 @@ Follow the documentation: https://github.com/ALTERNATIVE-EU/auth_envoy_filter
 
 ## Build ALTERNATIVE CKAN Docker Image
 
-1. Update configs in `ckan-alternative-theme/keycloak_auth-config` and `ckan-alternative-theme/cloudstorage-config`
-2. Copy the CKAN extensions into `ckan-alternative-theme`
-3. Build the image
+1. Copy the CKAN extensions into `ckan-alternative-theme`
+2. Build the image
 ```
 docker build -f ./ckan-alternative-theme/AlternativeCKAN ./ckan-alternative-theme -t gcr.io/alternative-363010/ckan-alternative
 ```
-4. Upload the image to the registry
+3. Upload the image to the registry
 ```
 docker push gcr.io/alternative-363010/ckan-alternative
 ```
@@ -191,7 +190,7 @@ helm repo add keitaro-charts https://keitaro-charts.storage.googleapis.com
 2. Update `deployment/manifests/ckan_values.yaml`
 3. Install helm chart
 ```
-helm install -f ./deployment/manifests/ckan_values.yaml ckan keitaro-charts/ckan
+helm install -f ./deployment/manifests/ckan_values.yaml ckan ./deployment/charts/ckan/ --version v2.0.4 -n alternative
 ```
 4. Wait for the ckan pod to become ready
 

@@ -1,0 +1,23 @@
+apiVersion: v2
+appVersion: 2.9.2
+dependencies:
+- condition: redis.enabled
+  name: redis
+  repository: https://keitaro-charts.storage.googleapis.com
+  version: 16.5.5
+- condition: solr.enabled
+  name: solr
+  repository: https://keitaro-charts.storage.googleapis.com
+  version: 1.5.5
+- condition: postgresql.enabled
+  name: postgresql
+  repository: https://keitaro-charts.storage.googleapis.com
+  version: 10.16.2
+- condition: datapusher.enabled
+  name: datapusher
+  repository: https://keitaro-charts.storage.googleapis.com
+  version: 1.0.0
+description: CKAN Helm chart
+name: ckan
+type: application
+version: v2.0.4
