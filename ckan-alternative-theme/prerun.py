@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import base64
 import os
 import sys
 import subprocess
@@ -26,6 +27,9 @@ import json
 import time
 
 ckan_ini = os.environ.get('CKAN_INI', '/srv/app/production.ini')
+
+solr_admin_username = os.environ.get('CKAN_SOLR_USER', '')
+solr_admin_password = os.environ.get('CKAN_SOLR_PASSWORD', '')
 
 RETRY = 5
 
@@ -71,9 +75,17 @@ def check_solr_connection(retry=None):
 
     url = os.environ.get('CKAN_SOLR_URL', '')
     search_url = '{url}/schema/name?wt=json'.format(url=url)
+    
+    credentials = f'{solr_admin_username}:{solr_admin_password}'
+    encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+    
+    request = urllib.request.Request(search_url)
+    
+    request.add_header('Authorization', 'Basic ' + encoded_credentials)
 
     try:
-        connection = urllib.request.urlopen(search_url)
+        print('[prerun] Connecting to solr...')
+        connection = urllib.request.urlopen(request)
     except urllib.error.URLError as e:
         print((str(e)))
         print('[prerun] Unable to connect to solr...try again in a while.')

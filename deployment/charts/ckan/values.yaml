@@ -6,8 +6,16 @@ replicaCount: 1
 
 image:
   repository: keitaro/ckan
-  tag: 2.9.8
+  tag: 2.11.0
   pullPolicy: IfNotPresent
+  testConnection:
+    repository: busybox
+    tag: latest
+    pullPolicy: IfNotPresent
+  initContainer:
+    repository: busybox
+    tag: latest
+    pullPolicy: IfNotPresent  
 
 imagePullSecrets: []
 nameOverride: ""
@@ -17,7 +25,7 @@ pvc:
   enabled: true
   size: "1Gi"
   storageClassName: ""
-  accessmode: "ReadWriteMany"
+  accessmode: "ReadWriteOnce"
 
 # DBDeploymentName -- Variable for name override for postgres deployment
 DBDeploymentName: &DBDeploymentName postgres
@@ -74,17 +82,20 @@ ckan:
   # ckan.siteUrl -- Url for the CKAN instance
   siteUrl: "http://localhost:5000"
   # ckan.ckanPlugins -- List of plugins to be used by the instance
-  ckanPlugins: "envvars image_view text_view recline_view datastore datapusher"
+  ckanPlugins: "envvars activity image_view datatables_view datastore datapusher"
   # ckan.storagePath -- Storage path to be used by the instance
   storagePath: "/var/lib/ckan/default"
   activityStreamsEmailNotifications: "true"
   debug: "false"
+  # To debug inside the ckan container (this sets the entrypoint of the container to sleep infinity)
+  container_debug: false
   # uswgi.proc.num -- The number of uswgi workers ckan will start
   uwsg_num: "2"
   # ckan.maintenanceMode -- Set to true to disable CKAN from starting and serve a maintenance page
   maintenanceMode: "false"
+
   psql:
-    # ckan.psql.runOnAzure -- Set to true to run on Azure (if true wont run on anything other then azure) set to false to run on other platforms
+    # ckan.psql.runOnAzure -- Set to true to run on Azure (if true wont run on anything other then azure) set to false to run on other platforms  
     runOnAzure: false
     # ckan.psql.initialize -- Flag whether to initialize the PostgreSQL instance with the provided users and databases
     initialize: true
@@ -94,37 +105,14 @@ ckan:
     masterPassword: *MasterDBPass
     # ckan.psql.masterDatabase -- PostgreSQL database for the master user
     masterDatabase: *MasterDBName
-  db:
-    # ckan.db.ckanDbUrl -- Url of the PostgreSQL server where the CKAN database is hosted
-    ckanDbUrl: *DBHost
-    # ckan.db.ckanDbName -- Name of the database to be used by CKAN
-    ckanDbName: *CkanDBName
-    # ckan.db.ckanDbUser -- Username of the database to be used by CKAN
-    ckanDbUser: *CkanDBUser
-    # ckan.db.ckanDbPassword -- Password of the user for the database to be used by CKAN
-    ckanDbPassword: *CkanDBPass
-  datastore:
-    # ckan.datastore.RwDbUrl -- Url of the PostgreSQL server where the datastore database is hosted
-    RwDbUrl: *DBHost
-    # ckan.datastore.RwDbName -- Name of the database to be used for Datastore
-    RwDbName: *DatastoreDBName
-    # ckan.datastore.RwDbUser -- Username for the datastore database with write permissions
-    RwDbUser: *DatastoreRWDBUser
-    # ckan.datastore.RwDbPassword -- Password for the datastore write permissions user
-    RwDbPassword: *DatastoreRWDBPass
-    # ckan.datastore.RoDbUrl -- Url of the PostgreSQL server where the datastore database is hosted
-    RoDbUrl: *DBHost
-    # ckan.datastore.RoDbName -- Name of the database to be used for Datastore
-    RoDbName: *DatastoreDBName
-    # ckan.datastore.RoDbUser -- Username for the datastore database with read permissions
-    RoDbUser: *DatastoreRODBUser
-    # ckan.datastore.RoDbPassword -- Password for the datastore read permissions user
-    RoDbPassword: *DatastoreRODBPass
+
   # ckan.solr -- Location of SOLR collection used by the instance
   solr: "http://solr-headless:8983/solr/ckancollection"
   # ckan.redis -- Location of the Redis service to be used by the CKAN instance
   redis: "redis://redis-headless:6379/0"
+
   spatialBackend: "solr"
+
   locale:
     offered: "en"
     default: "en"
@@ -148,8 +136,8 @@ ckan:
   #   - name: FOO
   #     value: "bar"
   #
-  extraEnv: []
 
+  extraEnv: []
 
   readiness:
     # ckan.readiness.initialDelaySeconds -- Inital delay seconds for the readiness probe
@@ -160,6 +148,7 @@ ckan:
     failureThreshold: 6
     # ckan.readiness.timeoutSeconds -- Timeout interval for the readiness probe
     timeoutSeconds: 10
+
   liveness:
     # ckan.liveness.initialDelaySeconds -- Initial delay for the liveness probe
     initialDelaySeconds: 10
@@ -169,6 +158,34 @@ ckan:
     failureThreshold: 6
     # ckan.liveness.timeoutSeconds -- Timeout interval for the liveness probe
     timeoutSeconds: 10
+
+  db:
+    # ckan.db.ckanDbUrl -- Url of the PostgreSQL server where the CKAN database is hosted
+    ckanDbUrl: *DBHost
+    # ckan.db.ckanDbName -- Name of the database to be used by CKAN
+    ckanDbName: *CkanDBName
+    # ckan.db.ckanDbUser -- Username of the database to be used by CKAN
+    ckanDbUser: *CkanDBUser
+    # ckan.db.ckanDbPassword -- Password of the user for the database to be used by CKAN
+    ckanDbPassword: *CkanDBPass
+
+  datastore:
+    # ckan.datastore.RwDbUrl -- Url of the PostgreSQL server where the datastore database is hosted
+    RwDbUrl: *DBHost
+    # ckan.datastore.RwDbName -- Name of the database to be used for Datastore
+    RwDbName: *DatastoreDBName
+    # ckan.datastore.RwDbUser -- Username for the datastore database with write permissions
+    RwDbUser: *DatastoreRWDBUser
+    # ckan.datastore.RwDbPassword -- Password for the datastore write permissions user
+    RwDbPassword: *DatastoreRWDBPass
+    # ckan.datastore.RoDbUrl -- Url of the PostgreSQL server where the datastore database is hosted
+    RoDbUrl: *DBHost
+    # ckan.datastore.RoDbName -- Name of the database to be used for Datastore
+    RoDbName: *DatastoreDBName
+    # ckan.datastore.RoDbUser -- Username for the datastore database with read permissions
+    RoDbUser: *DatastoreRODBUser
+    # ckan.datastore.RoDbPassword -- Password for the datastore read permissions user
+    RoDbPassword: *DatastoreRODBPass
 
 serviceAccount:
   # serviceAccount.create -- Specifies whether a service account should be created
@@ -183,6 +200,7 @@ serviceAccount:
 # example:
 # ckan:
 #   test: label1
+
 labels:
   enabled: false
   ckan: []
@@ -208,6 +226,7 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  className: ""
   hosts:
     - host: chart-example.local
       paths:
@@ -241,8 +260,18 @@ tolerations: []
 
 affinity: {}
 
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  cpuTargetAverageUtilization: 80
+  memoryTargetAverageUtilization: 80
+  sessions:
+    session_url: redis://redis-headless:6379/0
+    session_type: ext:redis
+
 datapusher:
-  # datapusher.enabled -- Flag to control whether to deploy the datapusher
+ # datapusher.enabled -- Flag to control whether to deploy the datapusher
   enabled: true
   # datapusher.fullnameOverride -- Name override for the datapusher deployment
   fullnameOverride: *DatapusherName
@@ -285,10 +314,49 @@ redis:
   # redis.auth.password --  The password of redis if auth is enabled
     password: 
 
-solr:  
-  # Please see all available overrides at https://github.com/helm/charts/tree/master/incubator/solr
+
+solr: 
+  # Please see all available overrides at https://github.com/bitnami/charts/tree/master/bitnami/solr/#installing-the-chart
   # solr.enabled -- Flag to control whether to deploy SOLR
   enabled: true
+  global:
+    imageRegistry: ""
+    imagePullSecrets: []
+    storageClass: ""
+  auth:
+  # solr.auth.enabled -- Enable or disable auth (if auth is disabled solr-init cant upload the configset/schema.xml for ckan)
+    enabled: true
+  # solr.auth.adminUser -- The name of the solr admin user
+    adminUsername: admin
+  # solr.auth.adminPassword -- The password of the solr admin user
+    adminPassword: pass
+  # solr.collection -- the name of the collection created by solr 
+  # since we are creating one with solr-init this needs to be blank
+  collection:
+  # solr.collectionShards -- Number of shards for the SOLR collection
+  collectionShards: 
+  # solr.collectionReplicas -- Number of replicas for each SOLR shard
+  collectionReplicas: 
+  # solr.fullnameOverride -- Name override for the SOLR deployment
+  fullnameOverride: *SolrName
+  # solr.replicaCount -- Number of SOLR instances in the cluster
+  replicaCount: 1
+  volumeClaimTemplates:
+    # solr.volumeClaimTemplates.storageSize -- Size of Solr PVC
+    storageSize: 5Gi
+  image:
+    registry: docker.io
+    # solr.image.repository -- Repository for the SOLR image
+    repository: bitnami/solr
+    # solr.image.tag -- Tag for the SOLR image
+    tag: 8.11.1
+  zookeeper:
+    # solr.zookeeper.replicaCount -- Numer of Zookeeper replicas in the ZK cluster
+    replicaCount: 1
+    persistence:
+      # solr.zookeeper.persistence.size -- Size of ZK PVC
+      size: 1Gi
+
   initialize:
     # solr.initialize.enabled -- Flag whether to initialize the SOLR instance with the provided collection name
     enabled: true
@@ -300,24 +368,7 @@ solr:
     maxShardsPerNode: 10
     # solr.initialize.configsetName -- Name of the config set used for initializing
     configsetName: ckanConfigSet
-  # solr.fullnameOverride -- Name override for the SOLR deployment
-  fullnameOverride: *SolrName
-  # solr.replicaCount -- Number of SOLR instances in the cluster
-  replicaCount: 1
-  volumeClaimTemplates:
-    # solr.volumeClaimTemplates.storageSize -- Size of Solr PVC
-    storageSize: 5Gi
-  image:
-    # solr.image.repository -- Repository for the SOLR image
-    repository: solr
-    # solr.image.tag -- Tag for the SOLR image
-    tag: 6.6.6
-  zookeeper:
-    # solr.zookeeper.replicaCount -- Numer of Zookeeper replicas in the ZK cluster
-    replicaCount: 1
-    persistence:
-      # solr.zookeeper.persistence.size -- Size of ZK PVC
-      size: 1Gi
+
 
 postgresql:
   # postgresql.enabled -- Flag to control whether to deploy PostgreSQL
@@ -327,8 +378,22 @@ postgresql:
     size: 1Gi
   # postgresql.fullnameOverride -- Name override for the PostgreSQL deployment
   fullnameOverride: *DBDeploymentName
-  # postgresql.pgPass -- Password for the master PostgreSQL user.
-  # Feeds into the `postgrescredentials` secret that is provided to the PostgreSQL chart
-  pgPass: *MasterDBPass
-  # postgresql.existingSecret -- Name of existing secret that holds passwords for PostgreSQL
-  existingSecret: postgrescredentials
+  # @param postgresql.auth.postgresPassword Password for the "postgres" admin user (overrides `auth.postgresPassword`)
+  # @param postgresql.auth.username Name for a custom user to create (overrides `auth.username`)
+  # @param postgresql.auth.password Password for the custom user to create (overrides `auth.password`)
+  # @param postgresql.auth.database Name for a custom database to create (overrides `auth.database`)
+  # @param postgresql.auth.existingSecret Name of existing secret to use for PostgreSQL credentials (overrides `auth.existingSecret`).
+  # @param postgresql.auth.secretKeys.adminPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.adminPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
+  # @param postgresql.auth.secretKeys.userPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.userPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
+  # @param postgresql.auth.secretKeys.replicationPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.replicationPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
+  auth:
+    postgresPassword: *MasterDBPass
+    username: *CkanDBUser
+    password: *CkanDBPass
+    database: *CkanDBName
+    # existingSecret: ""
+    # secretKeys:
+    #   adminPasswordKey: ""
+    #   userPasswordKey: ""
+    #   replicationPasswordKey: ""
+  

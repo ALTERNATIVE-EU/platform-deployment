@@ -1,6 +1,6 @@
-FROM ghcr.io/keitaroinc/ckan:2.9.5
+FROM keitaro/ckan:2.11.0
 
-ENV CKAN__PLUGINS envvars stats image_view text_view recline_view datastore datapusher keycloak_auth alternative_theme cloudstorage extrafields keycloak_access_token
+ENV CKAN__PLUGINS envvars activity stats image_view datatables_view text_view datastore datapusher keycloak_auth alternative_theme cloudstorage extrafields keycloak_access_token
 
 # Switch to the root user
 USER root
