@@ -199,12 +199,18 @@ Follow the documentation: https://github.com/ALTERNATIVE-EU/auth_envoy_filter
 
 ## Build ALTERNATIVE CKAN Docker Image
 
-1. Build the image:
+1. Download submodules:
+   ```sh
+   git submodule update --init --recursive
+   ```
+
+
+2. Build the image:
    ```
    docker build -f ./ckan-alternative-theme/AlternativeCKAN ./ckan-alternative-theme -t gcr.io/alternative-363010/ckan-alternative
    ```
 
-2. Upload the image to the registry:
+3. Upload the image to the registry:
    ```
    docker push gcr.io/alternative-363010/ckan-alternative
    ```
