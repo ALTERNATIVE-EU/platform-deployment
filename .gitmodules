@@ -1,0 +1,15 @@
+[submodule "ckan-alternative-theme/ckanext-alternative_theme"]
+	path = ckan-alternative-theme/ckanext-alternative_theme
+	url = https://github.com/ALTERNATIVE-EU/ckanext-alternative_theme
+[submodule "ckan-alternative-theme/ckanext-cloudstorage"]
+	path = ckan-alternative-theme/ckanext-cloudstorage
+	url = https://github.com/ALTERNATIVE-EU/ckanext-cloudstorage
+[submodule "ckan-alternative-theme/ckanext-extrafields"]
+	path = ckan-alternative-theme/ckanext-extrafields
+	url = https://github.com/ALTERNATIVE-EU/ckanext-extrafields
+[submodule "ckan-alternative-theme/ckanext-keycloak_access_token"]
+	path = ckan-alternative-theme/ckanext-keycloak_access_token
+	url = https://github.com/ALTERNATIVE-EU/ckanext-keycloak_access_token
+[submodule "ckan-alternative-theme/ckanext-keycloak_auth"]
+	path = ckan-alternative-theme/ckanext-keycloak_auth
+	url = https://github.com/ALTERNATIVE-EU/ckanext-keycloak_auth
