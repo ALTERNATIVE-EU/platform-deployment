@@ -12,9 +12,7 @@ COPY ./ckanext-keycloak_auth /srv/app/src/ckan/contrib/cookiecutter/ckan_extensi
 COPY ./ckanext-keycloak_access_token /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-keycloak_access_token/ckanext-keycloak_access_token
 COPY ./ckanext-extrafields /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-extrafields/ckanext-extrafields
 COPY dev-requirements.txt /srv/app/dev-requirements.txt
-COPY keycloak_auth-config /srv/app/keycloak_auth-config
-COPY cloudstorage-config /srv/app/cloudstorage-config
-COPY custom-ckan-config /srv/app/custom-ckan-config
+COPY ./ckan-entrypoint.sh /usr/local/bin/ckan-entrypoint.sh
 
 WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-alternative_theme/ckanext-alternative_theme
 RUN pip install -r /srv/app/dev-requirements.txt
@@ -40,12 +38,9 @@ WORKDIR /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-cloudstora
 COPY ./ckanext-cloudstorage /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-cloudstorage/ckanext-cloudstorage
 RUN python /srv/app/src/ckan/contrib/cookiecutter/ckan_extension/ckanext-cloudstorage/ckanext-cloudstorage/setup.py develop
 
-# Set-up config file
-RUN ckan config-tool /srv/app/production.ini -f /srv/app/keycloak_auth-config
-RUN ckan config-tool /srv/app/production.ini -f /srv/app/cloudstorage-config
-RUN ckan config-tool /srv/app/production.ini -f /srv/app/custom-ckan-config
-
 # Switch to the ckan user
 USER ckan
 
 WORKDIR /srv/app
+
+ENTRYPOINT ["/bin/bash", "-c", "/usr/local/bin/ckan-entrypoint.sh && /srv/app/start_ckan.sh"]

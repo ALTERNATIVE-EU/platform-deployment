@@ -75,6 +75,7 @@ def check_solr_connection(retry=None):
     try:
         connection = urllib.request.urlopen(search_url)
     except urllib.error.URLError as e:
+        print((str(e)))
         print('[prerun] Unable to connect to solr...try again in a while.')
         import time
         time.sleep(10)
