@@ -10,13 +10,15 @@ metadata:
     meta.helm.sh/release-name: ckan
     meta.helm.sh/release-namespace: alternative
     nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+    nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
+    nginx.ingress.kubernetes.io/proxy-busy-buffers-size: 256k
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
     nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.org/client-max-body-size: "1024m"
-    nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
   name: redirect-ckan
   namespace: alternative
 spec:
