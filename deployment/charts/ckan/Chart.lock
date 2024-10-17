@@ -1,15 +1,15 @@
 dependencies:
 - name: redis
-  repository: https://charts.bitnami.com/bitnami
-  version: 16.11.3
+  repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
+  version: 16.5.5
 - name: solr
   repository: https://keitaro-charts.storage.googleapis.com
   version: 1.5.5
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
-  version: 11.9.13
+  repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
+  version: 10.16.2
 - name: datapusher
   repository: https://keitaro-charts.storage.googleapis.com
   version: 1.0.0
-digest: sha256:f75de342d0c3bc97a1c342eb1ee2a52d39e3500c8e36e9849cbcbb68e22ce14c
-generated: "2024-10-16T16:27:54.879695695+03:00"
+digest: sha256:5ea4847dfe3a8ffc7ec9d82622969d3fcba75b9dc771644caaa10591f24614b1
+generated: "2024-10-17T09:18:05.915946359+03:00"
