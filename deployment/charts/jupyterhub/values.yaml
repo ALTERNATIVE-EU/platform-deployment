@@ -35,7 +35,22 @@ hub:
   config:
     JupyterHub:
       admin_access: true
-      authenticator_class: dummy
+      authenticator_class: generic-oauth
+    GenericOAuthenticator:
+      client_id: jupyterhub
+      client_secret: client_secret
+      oauth_callback_url: oauth_callback_url
+      authorize_url: authorize_url
+      token_url: token_url
+      userdata_url: userdata_url
+      allowed_groups:
+        - jupyterhub-user
+      claim_groups_key: groups
+      login_service: keycloak
+      username_key: preferred_username
+      auto_login: true
+      userdata_params:
+        state: state
   service:
     type: ClusterIP
     annotations: {}
@@ -188,7 +203,7 @@ proxy:
     rollingUpdate:
   # service relates to the proxy-public service
   service:
-    type: LoadBalancer
+    type: ClusterIP
     labels: {}
     annotations: {}
     nodePorts:
@@ -390,7 +405,9 @@ singleuser:
   extraLabels:
     hub.jupyter.org/network-access-hub: "true"
   extraFiles: {}
-  extraEnv: {}
+  extraEnv:
+    SHELL: /bin/bash
+    PATH: /var/alternative-anaconda/anaconda3/bin:/var/alternative-anaconda/anaconda3/condabin:/usr/local/bin:/usr/bin:/bin
   lifecycleHooks: {}
   initContainers: []
   extraContainers: []
@@ -401,8 +418,13 @@ singleuser:
   storage:
     type: dynamic
     extraLabels: {}
-    extraVolumes: []
-    extraVolumeMounts: []
+    extraVolumes:
+      - name: jupyterhub-shared
+        persistentVolumeClaim:
+          claimName: nfs-pvc
+    extraVolumeMounts:
+      - name: jupyterhub-shared
+        mountPath: /home/shared
     static:
       pvcName:
       subPath: "{username}"
@@ -414,9 +436,9 @@ singleuser:
       volumeNameTemplate: volume-{username}{servername}
       storageAccessModes: [ReadWriteOnce]
   image:
-    name: quay.io/jupyterhub/k8s-singleuser-sample
-    tag: "3.3.7"
-    pullPolicy:
+    name: alternative.cr.de-fra.ionos.com/alternative-singleuser
+    tag: "v0.0.7"
+    pullPolicy: Always
     pullSecrets: []
   startTimeout: 1200
   cpu:
@@ -428,7 +450,7 @@ singleuser:
   extraResource:
     limits: {}
     guarantees: {}
-  cmd: jupyterhub-singleuser
+  cmd: /var/alternative-anaconda/init.sh
   defaultUrl:
   extraPodConfig: {}
   profileList: []
@@ -637,7 +659,7 @@ prePuller:
   extraTolerations: []
   # hook relates to the hook-image-awaiter Job and hook-image-puller DaemonSet
   hook:
-    enabled: true
+    enabled: false
     pullOnlyOnChanges: true
     # image and the configuration below relates to the hook-image-awaiter Job
     image:

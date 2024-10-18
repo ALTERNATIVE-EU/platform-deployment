@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+spec:
+  destination:
+    name: ''
+    namespace: alternative
+    server: https://kubernetes.default.svc
+  source:
+    path: deployment/charts/keycloak
+    repoURL: https://github.com/ALTERNATIVE-EU/platform-deployment.git
+    targetRevision: master
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+ignoreDifferences:
+  - kind: Secret
+    jsonPointers:
+      - /data
+      - /metadata/annotations
+  - kind: ConfigMap
+    jsonPointers:
+      - /data
+  - group: apps
+    kind: StatefulSet
+    jsonPointers:
+      - /spec/template/metadata/annotations

@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jupyterhub-nfs
+spec:
+  destination:
+    name: ''
+    namespace: alternative
+    server: https://kubernetes.default.svc
+  source:
+    path: deployment/develop/manifests/nfs
+    repoURL: git@github.com:ALTERNATIVE-EU/platform-deployment.git
+    targetRevision: 71-ci
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

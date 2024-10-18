@@ -1,0 +1,9 @@
+image:
+  repository: alternative.cr.de-fra.ionos.com/ckan-alternative
+  tag: 0.0.1
+
+pvc:
+  accessmode: ReadWriteOnce
+
+imagePullSecrets:
+  - name: ionos-registry-secret

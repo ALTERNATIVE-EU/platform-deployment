@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alternative-manifests
+spec:
+  destination:
+    name: ''
+    namespace: alternative
+    server: https://kubernetes.default.svc
+  source:
+    path: deployment/develop/manifests/
+    repoURL: git@github.com:ALTERNATIVE-EU/platform-deployment.git
+    targetRevision: 71-ci
+  sources: []
+  project: default
+  ignoreDifferences:
+  - group: networking.k8s.io
+    kind: Ingress
+    jsonPointers:
+      - /spec/rules
