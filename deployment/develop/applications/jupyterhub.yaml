@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jupyterhub
+spec:
+  destination:
+    name: ''
+    namespace: alternative
+    server: https://kubernetes.default.svc
+  source:
+    path: deployment/charts/jupyterhub
+    repoURL: git@github.com:ALTERNATIVE-EU/platform-deployment.git
+    targetRevision: 71-ci
+    helm:
+      valueFiles: []
+      parameters:
+        - name: hub.config.GenericOAuthenticator.authorize_url
+          value: https://dev.alternative.cst-bg.net/auth/realms/alternative/protocol/openid-connect/auth
+        - name: hub.config.GenericOAuthenticator.client_secret
+          value: <secret>
+        - name: hub.config.GenericOAuthenticator.oauth_callback_url
+          value: https://jupyterhub.dev.alternative.cst-bg.net/hub/oauth_callback
+        - name: hub.config.GenericOAuthenticator.token_url
+          value: https://dev.alternative.cst-bg.net/auth/realms/alternative/protocol/openid-connect/token
+        - name: hub.config.GenericOAuthenticator.userdata_url
+          value: https://dev.alternative.cst-bg.net/auth/realms/alternative/protocol/openid-connect/userinfo
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  ignoreDifferences:
+    - kind: Secret
+      jsonPointers:
+        - /data
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/template/metadata/annotations

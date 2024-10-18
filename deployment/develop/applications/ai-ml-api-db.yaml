@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ai-ml-api-db
+spec:
+  destination:
+    name: ''
+    namespace: alternative
+    server: https://kubernetes.default.svc
+  source:
+    path: ''
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: 16.0.1
+    chart: postgresql
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+ignoreDifferences:
+  - kind: Secret
+    jsonPointers:
+      - /data
+      - /metadata/annotations

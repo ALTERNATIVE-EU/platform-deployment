@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ckan
+spec:
+  destination:
+    name: ''
+    namespace: alternative
+    server: https://kubernetes.default.svc
+  source:
+    path: deployment/charts/ckan
+    repoURL: git@github.com:ALTERNATIVE-EU/platform-deployment.git
+    targetRevision: 71-ci
+    helm:
+      parameters:
+        - name: keycloakAuthConfig
+          value: |
+            ckanext.keycloak.server_url = https://dev.alternative.cst-bg.net/auth
+            ckanext.keycloak.realm = alternative
+            ckanext.keycloak.client_id = ckan-backend
+            ckanext.keycloak.frontend_client_id = ckan-frontend
+            ckanext.keycloak.admin_group = admins
+            ckanext.keycloak.client_secret_key = <secret>
+            ckanext.keycloak.ckan_url = https://dev.alternative.cst-bg.net/
+            ckanext.keycloak.ai_ml_api_client_id = ai-ml-api
+            ckanext.keycloak.ai_ml_api_client_secret = <secret>
+            ckanext.access_tokens.database_name = postgres
+            ckanext.access_tokens.username = postgres
+            ckanext.access_tokens.password = <password>
+            ckanext.access_tokens.host = postgres.alternative
+            ckanext.access_tokens.table = revoked_tokens
+            ckanext.access_tokens.url = https://api-dev.alternative.cst-bg.net
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  ignoreDifferences:
+    - kind: PersistentVolumeClaim
+      jsonPointers:
+        - /spec/storageClassName
