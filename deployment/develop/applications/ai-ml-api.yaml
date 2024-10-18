@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ai-ml-api
+spec:
+  destination:
+    name: ''
+    namespace: alternative
+    server: https://kubernetes.default.svc
+  source:
+    path: deployment/helm
+    repoURL: git@github.com:ALTERNATIVE-EU/ai-ml-api.git
+    targetRevision: 71-ci
+    helm:
+      valueFiles:
+        - ../develop/values.yaml
+  sources: []
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
