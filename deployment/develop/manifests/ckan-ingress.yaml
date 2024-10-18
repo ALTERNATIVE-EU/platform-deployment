@@ -1,7 +1,8 @@
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: redirect-ckan
+  namespace: alternative
   annotations:
     acme.cert-manager.io/http01-edit-in-place: "true"
     cert-manager.io/cluster-issuer: cluster-issuer-letsencrypt
@@ -19,8 +20,6 @@ metadata:
     nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-  name: redirect-ckan
-  namespace: alternative
 spec:
   rules:
   - host: "dev.alternative.cst-bg.net"
