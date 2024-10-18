@@ -76,7 +76,7 @@ jobs:
         run: |
           IMAGE_TAG=${{ steps.version.outputs.version }}
           DOCKER_BUILDKIT=1
-          docker build -f ./jupyterhub/singleuser/Dockerfile ./jupyterhub/singleuser/ -t alternative.cr.de-fra.ionos.com/alternative-singleuser:${IMAGE_TAG} -t alternative.cr.de-fra.ionos.com/alternative-singleuser:latest
+          docker build -f ./deployment/singleuser/Dockerfile ./deployment/singleuser/ -t alternative.cr.de-fra.ionos.com/alternative-singleuser:${IMAGE_TAG} -t alternative.cr.de-fra.ionos.com/alternative-singleuser:latest
 
       # Log in to IONOS Container Registry
       - name: Log in to IONOS Container Registry
