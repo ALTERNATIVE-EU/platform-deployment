@@ -30,6 +30,16 @@ spec:
             ckanext.access_tokens.host = postgres.alternative
             ckanext.access_tokens.table = revoked_tokens
             ckanext.access_tokens.url = https://api-dev.alternative.cst-bg.net
+        - name: sysadminApiToken
+          value: <secret>
+        - name: smtp.mailFrom
+          value: <from>
+        - name: smtp.password
+          value: <password>
+        - name: smtp.server
+          value: dev.alternative.cst-bg.net:587
+        - name: smtp.user
+          value: <user>
   sources: []
   project: default
   syncPolicy:
