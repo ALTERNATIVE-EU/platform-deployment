@@ -1,0 +1,6 @@
+singleuser:
+  image:
+    tag: 0.0.1
+
+imagePullSecrets:
+  - name: ionos-registry-secret

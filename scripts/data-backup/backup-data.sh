@@ -2,14 +2,14 @@
 
 set -e
 
-NAMESPACE="default"  # Change to the namespace where your PVCs are located
+NAMESPACE="alternative"  # Change to the namespace where your PVCs are located
 LOCAL_DIR="./backup" # Change to the local directory where you want to store the backup
 
 # Get a list of all PVCs in the namespace
 PVCS=$(kubectl get pvc -n "${NAMESPACE}" -o jsonpath='{.items[*].metadata.name}')
 
-# Get only PVCS that start with "claim-"
-PVCS=$(echo "${PVCS}" | tr " " "\n" | grep "^claim-")
+# Backup both "claim-" PVCs and "nfs-pvc"
+PVCS=$(echo "${PVCS}" | tr " " "\n" | grep -E "^(claim-|nfs-pvc)")
 
 for PVC in ${PVCS}; do
   (

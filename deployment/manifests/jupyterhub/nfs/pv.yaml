@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+  namespace: alternative
+  labels:
+    app: nfs-data
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: "nfs-service.alternative.svc.cluster.local"
+    path: "/"
+  mountOptions:
+    - soft
+    - nfsvers=4.1

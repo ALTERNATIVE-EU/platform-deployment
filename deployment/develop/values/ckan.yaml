@@ -1,0 +1,16 @@
+image:
+  repository: alternative.cr.de-fra.ionos.com/ckan-alternative
+  tag: 0.0.1
+
+pvc:
+  accessmode: ReadWriteOnce
+  enabled: true
+  size: 1Gi
+  storageClassName: ionos-enterprise-hdd
+
+imagePullSecrets:
+  - name: ionos-registry-secret
+
+ckan:
+  siteTitle: ALTERNATIVE
+  siteUrl: https://dev.alternative.cst-bg.net

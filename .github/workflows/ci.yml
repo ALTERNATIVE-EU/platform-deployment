@@ -1,0 +1,92 @@
+name: CKAN CI Pipeline
+
+# Trigger the workflow on push or pull requests to the main branch
+on:
+  push:
+    branches:
+      - main
+      - 71-ci
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  # Job to build and push CKAN Docker image
+  build-ckan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checkout the repository and submodules
+      - uses: actions/checkout@v4
+        with:
+          token: "${{ secrets.ACCESS_TOKEN }}"
+          submodules: recursive  # Ensure submodules are checked out
+
+      # Get the next semantic version
+      - name: Get next version
+        id: version
+        uses: PaulHatch/semantic-version@v5.4.0
+        with:
+          minor_pattern: "^feat"
+          patch_pattern: "^fix"
+          default: patch
+
+      # Build the CKAN Docker image
+      - name: Build CKAN Docker Image
+        run: |
+          IMAGE_TAG=${{ steps.version.outputs.version }}
+          docker build -f ./ckan-alternative-theme/AlternativeCKAN ./ckan-alternative-theme \
+            -t alternative.cr.de-fra.ionos.com/ckan-alternative:${IMAGE_TAG} \
+            -t alternative.cr.de-fra.ionos.com/ckan-alternative:latest
+
+      # Log in to IONOS Container Registry
+      - name: Log in to IONOS Container Registry
+        run: |
+          echo "${{ secrets.IONOS_CONTAINER_REGISTRY_PASSWORD }}" | docker login -u "${{ secrets.IONOS_CONTAINER_REGISTRY_USERNAME }}" alternative.cr.de-fra.ionos.com --password-stdin
+
+      # Push the CKAN Docker image to the IONOS Container Registry
+      - name: Push Docker Image
+        run: |
+          IMAGE_TAG=${{ steps.version.outputs.version }}
+          docker push alternative.cr.de-fra.ionos.com/ckan-alternative:latest
+          docker push alternative.cr.de-fra.ionos.com/ckan-alternative:${IMAGE_TAG}
+
+  build-jupyterhub:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checkout the repository and submodules
+      - uses: actions/checkout@v4
+        with:
+          token: "${{ secrets.ACCESS_TOKEN }}"
+          submodules: recursive  # Ensure submodules are checked out
+
+      # Get the next semantic version
+      - name: Get next version
+        id: version
+        uses: PaulHatch/semantic-version@v5.4.0
+        with:
+          minor_pattern: "^feat"
+          patch_pattern: "^fix"
+          default: patch
+
+      # Build the CKAN Docker image
+      - name: Build CKAN Docker Image
+        run: |
+          IMAGE_TAG=${{ steps.version.outputs.version }}
+          DOCKER_BUILDKIT=1
+          docker build -f ./deployment/singleuser/Dockerfile ./deployment/singleuser/ -t alternative.cr.de-fra.ionos.com/alternative-singleuser:${IMAGE_TAG} -t alternative.cr.de-fra.ionos.com/alternative-singleuser:latest
+
+      # Log in to IONOS Container Registry
+      - name: Log in to IONOS Container Registry
+        run: |
+          echo "${{ secrets.IONOS_CONTAINER_REGISTRY_PASSWORD }}" | docker login -u "${{ secrets.IONOS_CONTAINER_REGISTRY_USERNAME }}" alternative.cr.de-fra.ionos.com --password-stdin
+
+      # Push the CKAN Docker image to the IONOS Container Registry
+      - name: Push Docker Image
+        run: |
+          IMAGE_TAG=${{ steps.version.outputs.version }}
+          docker push alternative.cr.de-fra.ionos.com/alternative-singleuser:latest
+          docker push alternative.cr.de-fra.ionos.com/alternative-singleuser:${IMAGE_TAG}
+
