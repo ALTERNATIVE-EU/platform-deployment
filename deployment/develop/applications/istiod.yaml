@@ -1,8 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio
-  namespace: argocd
+  name: istiod
 spec:
   destination:
     name: ''
@@ -11,10 +10,15 @@ spec:
   source:
     path: ''
     repoURL: https://istio-release.storage.googleapis.com/charts
-    targetRevision: 1.23.2
-    chart: base
+    targetRevision: 1.22.1
+    chart: istiod
   sources: []
   project: default
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      jsonPointers:
+        - /webhooks
