@@ -2,6 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: ckan
+  namespace: argocd
 spec:
   destination:
     name: ''
@@ -12,6 +13,8 @@ spec:
     repoURL: git@github.com:ALTERNATIVE-EU/platform-deployment.git
     targetRevision: 71-ci
     helm:
+      valueFiles:
+        - ../../develop/values/ckan.yaml
       parameters:
         - name: keycloakAuthConfig
           value: |
